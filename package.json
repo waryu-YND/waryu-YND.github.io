@@ -1,0 +1,19 @@
+{
+  "name": "homepage",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.5.2",
+    "@astrojs/solid-js": "^4.0.1",
+    "astro": "^4.3.5",
+    "solid-js": "^1.8.14",
+    "typescript": "^5.3.3"
+  }
+}
