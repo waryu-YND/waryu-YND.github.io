@@ -16,7 +16,9 @@ import {
 } from "./i18n";
 
 export type I18n<T extends LanguageDictionary<string[]>> = {
-  t: () => (literals: TemplateStringsArray, ...placeholders: any[]) => string;
+  t: (
+    key?: string
+  ) => (literals: TemplateStringsArray, ...placeholders: any[]) => string;
   lang: Accessor<GetLanguages<T>[number]>;
   setLang: Setter<GetLanguages<T>[number]>;
 };
@@ -25,17 +27,26 @@ export function createI18n<T extends LanguageDictionary<string[]>>(
   data: T,
   language: GetLanguages<T>[number]
 ): [
-  () => (literals: TemplateStringsArray, ...placeholders: any[]) => string,
+  (
+    key?: string
+  ) => (literals: TemplateStringsArray, ...placeholders: any[]) => string,
   Accessor<GetLanguages<T>[number]>,
   Setter<GetLanguages<T>[number]>
 ] {
   const [currentLanguage, setCurrentLanguage] = createSignal(language);
 
   return [
-    () =>
-      (literals: TemplateStringsArray, ...placeholders: any[]) => {
-        const rawString = rawTemplate(literals, placeholders);
-        let sentence = data[rawString]?.[currentLanguage()];
+    (key?: string) => {
+      return (literals: TemplateStringsArray, ...placeholders: any[]) => {
+        let sentence;
+        let rawString;
+        if (key) {
+          sentence = data[key]?.[currentLanguage()];
+          rawString = key;
+        } else {
+          rawString = rawTemplate(literals, placeholders);
+          sentence = data[rawString]?.[currentLanguage()];
+        }
         if (!sentence)
           console.error(
             `\`${rawString}\` does not exist in the language dictionary`
@@ -44,7 +55,8 @@ export function createI18n<T extends LanguageDictionary<string[]>>(
         sentence = parseTemplate(sentence, placeholders);
 
         return sentence;
-      },
+      };
+    },
     currentLanguage,
     setCurrentLanguage,
   ];
