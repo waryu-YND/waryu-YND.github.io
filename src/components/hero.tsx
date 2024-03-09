@@ -55,12 +55,16 @@ const COPY_SECOND = [
   "fickle",
 ];
 
-const Account: Component<{ src: string; name: string }> = (props) => {
+const Account: Component<{ src: string; name: string; link: string }> = (
+  props
+) => {
   return (
-    <div class={Styles.account}>
-      <img src={props.src} alt={props.src} />
-      <span>{props.name}</span>
-    </div>
+    <a href={props.link} style={{ "text-decoration": "none" }}>
+      <div class={Styles.account}>
+        <img src={props.src} alt={props.src} />
+        <span>{props.name}</span>
+      </div>
+    </a>
   );
 };
 
@@ -68,6 +72,8 @@ const Hero: Component = () => {
   let editor: HTMLDivElement | undefined;
   let over: HTMLDivElement | undefined;
   let circle: SVGCircleElement | undefined;
+  let firstTitleRef: HTMLSpanElement | undefined;
+  let secondTitleRef: HTMLSpanElement | undefined;
   const [code, setCode] = createSignal(CODE, { equals: false });
   const [firstTitle, setFirstTitle] = createSignal("Idea");
   const [secondTitle, setSecondTitle] = createSignal("infinity");
@@ -78,10 +84,17 @@ const Hero: Component = () => {
   let isMousedown = false;
 
   onMount(() => {
+    let size;
+    if (matchMedia("(max-width: 480px)").matches) {
+      size = 30;
+    } else {
+      size = 40;
+    }
+
     const instance = monaco.editor.create(editor!, {
       value: code(),
       language: "javascript",
-      fontSize: 40,
+      fontSize: size,
       wordWrap: "on",
       lineNumbers: "off",
       scrollBeyondLastLine: false,
@@ -124,6 +137,8 @@ const Hero: Component = () => {
 
       setFirstTitle(first);
       setSecondTitle(second);
+      resizeTitle(firstTitleRef!);
+      resizeTitle(secondTitleRef!);
     }
   };
 
@@ -155,6 +170,35 @@ const Hero: Component = () => {
   const resetGauge = () => {
     if (!circle) return;
     circle.style.strokeDashoffset = "125.66";
+  };
+
+  const hasBreakLine = (element: HTMLElement) => {
+    let range = new Range();
+    range.selectNode(element);
+    console.log(range.getClientRects());
+    return range.getClientRects().length > 2;
+  };
+
+  const resizeTitle = (title: HTMLSpanElement) => {
+    if (matchMedia("(max-width: 480px)").matches) {
+      title.style.fontSize = "4rem";
+    } else {
+      title.style.fontSize = "6rem";
+    }
+    let isResized = false;
+    while (hasBreakLine(title)) {
+      isResized = true;
+      const now = parseFloat(getComputedStyle(title).fontSize);
+      console.log(now);
+      title.style.fontSize = now - 1 + "px";
+    }
+    const now = parseFloat(getComputedStyle(title).fontSize);
+    console.log(now);
+    if (matchMedia("(max-width: 480px)").matches) {
+      title.style.fontSize = now - 7 + "px";
+    } else {
+      title.style.fontSize = now - 14 + "px";
+    }
   };
 
   const { t, lang, setLang } = useContext(I18nContext);
@@ -195,14 +239,16 @@ const Hero: Component = () => {
         // }}
       >
         <h1 class={Styles.title}>
-          <span class={`${Styles.word} ${Styles.dashed}`}>{t(
-            firstTitle()
-          )``}</span>
+          <span
+            class={`${Styles.word} ${Styles.dashed}`}
+            ref={firstTitleRef}
+          >{t(firstTitle())``}</span>
           <span class={Styles.medium}>{t()`is`}</span>
           <br></br>
-          <span class={`${Styles.word} ${Styles.dashed}`}>{t(
-            secondTitle()
-          )``}</span>
+          <span
+            class={`${Styles.word} ${Styles.dashed}`}
+            ref={secondTitleRef}
+          >{t(secondTitle())``}</span>
           <img
             src="saikoro.svg"
             alt="Dice"
@@ -210,14 +256,27 @@ const Hero: Component = () => {
             onClick={() => {
               changeTitle();
             }}
+            ontouchstart={() => {}}
           />
         </h1>
         <div class={Styles.action}>
           <div class={Styles.links}>
-            <Account src="github-logo.svg" name={"@" + github()} />
-            <Account src="zenn-logo.svg" name={"@" + zenn()} />
-            <Account src="x-logo.svg" name={"@" + twitter()} />
-            <Account src="reader.png" name="etc" />
+            <Account
+              src="github-logo.svg"
+              name={"@" + github()}
+              link="https://github.com/waryu-YND"
+            />
+            <Account
+              src="zenn-logo.svg"
+              name={"@" + zenn()}
+              link="https://zenn.dev/waryu"
+            />
+            <Account
+              src="x-logo.svg"
+              name={"@" + twitter()}
+              link="https://twitter.com/waryu_ynd"
+            />
+            <Account src="reader.png" name="etc" link="" />
           </div>
           <div class={Styles.mail}>
             <img src="mail.png" alt="mail" />

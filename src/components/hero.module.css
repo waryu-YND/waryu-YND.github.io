@@ -178,3 +178,59 @@
   top: 0;
   left: 0;
 }
+
+@media screen and (max-width: 480px) {
+  .hero {
+    height: 90dvh;
+  }
+
+  .content {
+    flex-direction: column;
+  }
+
+  .title {
+  }
+
+  .word {
+    font-size: 4rem;
+    margin: 8px 14px;
+  }
+
+  .medium {
+    font-size: 2rem;
+  }
+
+  .dice {
+    width: 26px;
+    height: 26px;
+    margin: 3px;
+    transition: all 0.3s;
+  }
+
+  .dice:hover {
+    width: 29px;
+    height: 29px;
+  }
+
+  .account {
+    height: 32px;
+    margin: 6px 10px;
+  }
+
+  .account > span {
+    font-size: larger;
+  }
+
+  .mail {
+    height: 32px;
+    margin: 12px 0;
+  }
+
+  .mail > span {
+    font-size: large;
+  }
+
+  .buttons > button {
+    margin: 6px;
+  }
+}
