@@ -86,7 +86,7 @@ const Hero: Component = () => {
   onMount(() => {
     let size;
     if (matchMedia("(max-width: 480px)").matches) {
-      size = 24;
+      size = 27;
     } else {
       size = 40;
     }
